@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body>
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			padding: 0;
+			max-height: 100dvh;
+			height: 100dvh;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.top>div {
+			width: 100%;
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-start;
+			align-items: center;
+			gap: 10px
+		}
+
+		.top>div>* {
+			width: 320px;
+		}
+
+		.top,
+		.bottom {
+			padding: 20px 10px;
+			background: #a9a9a9;
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: flex-start;
+			gap: 10px;
+		}
+
+		.message-box {
+			width: 100%;
+			height: 50px;
+		}
+
+		input,
+		textarea {
+			border-radius: 10px;
+			height: 34px;
+			padding: 10px;
+		}
+
+		.message-wrapper {
+			width: 100%;
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: flex-start;
+			gap: 10px;
+		}
+
+		.message-wrapper label,
+		.message-wrapper button {
+			width: 50px;
+			height: 50px;
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+			background-color: white;
+			font-size: 14px;
+			border-radius: 10px;
+			border: 1px solid black;
+		}
+
+		button {
+			font-size: 14px;
+			border-radius: 10px;
+			border: 1px solid black;
+			line-height: 24px;
+			padding: 4px 20px;
+		}
+
+		.chat {
+			flex-grow: 1;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			align-items: flex-start;
+			gap: 10px;
+			width: 100%;
+			overflow-y: auto;
+		}
+
+		.chat>p {
+			padding: 10px;
+			background: #ededed;
+			border-radius: 10px;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			align-items: flex-start;
+			gap: 10px;
+			margin: 0;
+		}
+	</style>
+
+	<div class="top">
+		<div>
+			<input id="username">
+			<button id="confirm_username_change">Change username</button>
+		</div>
+		<div>
+			<button id="chat_connect">Connect</button>
+			<button id="chat_disconnect">Disconnect</button>
+		</div>
+	</div>
+
+
+	<div class="chat" id="chat_area" aria-readonly="true" title="Chat"></div>
+
+	<div class="bottom">
+		<div class="message-wrapper">
+			<textarea class="message-box" id="chat_input" placeholder="Type your message"></textarea>
+			<label for="image_field">📎</label>
+			<input hidden type="file" id="image_field">
+			<button class="send" id="chat_submit_send_message">&#62;</button>
+		</div>
+	</div>
+</body>
+
+<script src="src/main.ts" type="module"></script>
+
+</html>
