@@ -1,22 +1,16 @@
 package org.example;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.codec.http.multipart.FileUpload;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
-import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
 import io.netty.util.CharsetUtil;
 import io.netty.util.internal.SystemPropertyUtil;
-import org.example.messages.ClientRequest;
 import org.example.messages.ImageUpload;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -27,6 +21,7 @@ import java.util.regex.Pattern;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_0;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+import static org.example.ChatServerInitializer.fileLookupTable;
 
 class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
@@ -37,16 +32,12 @@ class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
     public static final int HTTP_CACHE_SECONDS = 60;
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private final HashMap<String, String> fileLookupTable;
-
     private static final Pattern INSECURE_URI = Pattern.compile(".*[<>&\"].*");
 
     private HttpPostRequestDecoder decoder;
 
-    public HttpRequestHandler(String websocketURI, HashMap<String, String> fileLookupTable) {
+    public HttpRequestHandler(String websocketURI) {
         this.websocketURI = websocketURI;
-        this.fileLookupTable = fileLookupTable;
-
     }
 
     @Override
@@ -61,10 +52,9 @@ class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             ImageUpload imageUpload = new ImageUpload();
             assert path != null;
             if (path.endsWith("upload")) {
-                if (request.method() == HttpMethod.OPTIONS){
+                if (request.method() == HttpMethod.OPTIONS) {
                     // вонючий preflight
-                    FullHttpResponse response = new DefaultFullHttpResponse(
-                            HTTP_1_1, OK, Unpooled.copiedBuffer("", CharsetUtil.UTF_8));
+                    FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.copiedBuffer("", CharsetUtil.UTF_8));
                     response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
                     response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS, "*");
                     sendAndCleanupConnection(ctx, response);

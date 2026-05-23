@@ -11,14 +11,14 @@ import org.example.messages.ServerResponse;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class ChatServerInitializer extends ChannelInitializer<Channel> {
-    private final List<ServerResponse> chatHistory = new CopyOnWriteArrayList<>();
-    private final HashMap<String, String> fileLookupTable = new HashMap<>();
-
-    private final String websocketURI = "/ws";
+    public static final ConcurrentLinkedQueue<ServerResponse> chatHistory = new ConcurrentLinkedQueue<>();
+    public static final ConcurrentHashMap<String, String> fileLookupTable = new ConcurrentHashMap<>();
 
     @Override
     protected void initChannel(Channel ch) throws Exception {
@@ -26,8 +26,9 @@ public class ChatServerInitializer extends ChannelInitializer<Channel> {
         pipeline.addLast(new HttpServerCodec());
         pipeline.addLast(new ChunkedWriteHandler());
         pipeline.addLast(new HttpObjectAggregator(50 * 1024 * 1024));
-        pipeline.addLast(new HttpRequestHandler(websocketURI, fileLookupTable));
+        String websocketURI = "/ws";
+        pipeline.addLast(new HttpRequestHandler(websocketURI));
         pipeline.addLast(new WebSocketServerProtocolHandler(websocketURI, null, true, 50 * 1024 * 1024));
-        pipeline.addLast(new TextWebSocketFrameHandler(chatHistory, fileLookupTable));
+        pipeline.addLast(new TextWebSocketFrameHandler());
     }
 }

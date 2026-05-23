@@ -1,11 +1,11 @@
 package org.example.messages;
-import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ChatHistory {
-    public List<ServerResponse> chatHistory;
+    public ConcurrentLinkedQueue<ServerResponse> chatHistory;
     public String type;
 
-    public ChatHistory(String type, List<ServerResponse> chatHistory){
+    public ChatHistory(String type, ConcurrentLinkedQueue<ServerResponse> chatHistory) {
         this.type = type;
         this.chatHistory = chatHistory;
     }

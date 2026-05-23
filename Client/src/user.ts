@@ -38,7 +38,7 @@ export class User {
         return User.DEFAULT_USERNAME;
     }
 
-    public updateUserState(state: UserStates){
+    public updateUserState(state: UserStates) {
         this.data.state = state;
     }
 }

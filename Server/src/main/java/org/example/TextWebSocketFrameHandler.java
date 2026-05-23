@@ -7,33 +7,20 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.example.messages.*;
 import org.example.user.User;
 import org.example.user.UserStates;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import static org.example.ChatServerInitializer.chatHistory;
 
 public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
     private static final ChannelGroup channelGroup = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private final HashMap<String, String> fileLookupTable;
-    private final List<ServerResponse> chatHistory;
     private final User user = new User();
     private Channel ctxChannel;
-
-    public TextWebSocketFrameHandler(List<ServerResponse> chatHistory, HashMap<String, String> fileLookupTable) {
-        this.chatHistory = chatHistory;
-        this.fileLookupTable = fileLookupTable;
-    }
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object event) throws Exception {
@@ -96,7 +83,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     private void userMessage(ClientRequest message) throws JsonProcessingException {
         ServerResponse serverResponse;
         if (message.uuid != null) {
-            serverResponse = new ServerResponse("userMessage", message.message, user.username, new Static("image", message.uuid, "25.24.84.130:8080"));
+            serverResponse = new ServerResponse("userMessage", message.message, user.username, new Static("image", message.uuid, "localhost:8080"));
         } else {
             serverResponse = new ServerResponse("userMessage", message.message, user.username);
         }

@@ -6,8 +6,8 @@ public class Static {
     public final String server;
 
     public Static(String type, String uuid, String server) {
-       this.type = type;
-       this.uuid = uuid;
-       this.server = server;
+        this.type = type;
+        this.uuid = uuid;
+        this.server = server;
     }
 }

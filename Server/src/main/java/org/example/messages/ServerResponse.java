@@ -7,14 +7,14 @@ public class ServerResponse {
     public final long timestamp;
     public Static staticFiles;
 
-    public ServerResponse(String type, String message, String username){
+    public ServerResponse(String type, String message, String username) {
         this.type = type;
         this.message = message;
         this.username = username;
         this.timestamp = System.currentTimeMillis();
     }
 
-    public ServerResponse(String type, String message, String username, Static staticFiles){
+    public ServerResponse(String type, String message, String username, Static staticFiles) {
         this(type, message, username);
         this.staticFiles = staticFiles;
     }

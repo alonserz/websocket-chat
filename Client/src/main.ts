@@ -37,18 +37,19 @@ function main() {
         if (files && files.length > 0) {
             const file = files[0];
 
-            fetch("//" + location.hostname + ':8080/upload', {
+            fetch("//" + location.hostname + ":8080/upload", {
                 method: "Post",
-                headers: { 'Content-Type': file.type || 'application/octet-stream' },
-                body: file
+                headers: { "Content-Type": file.type || "application/octet-stream" },
+                body: file,
             })
-            .then((response) => response.json())
-            .then((json) => {
-                const uuid: string = (json as ImageUpload).uuid;
-                chat.sendClientRequest("userMessage", userMessage, uuid);
-            }).catch((error) => {
-                console.log(error);
-            });
+                .then((response) => response.json())
+                .then((json) => {
+                    const uuid: string = (json as ImageUpload).uuid;
+                    chat.sendClientRequest("userMessage", userMessage, uuid);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         } else {
             chat.sendClientRequest("userMessage", userMessage);
         }

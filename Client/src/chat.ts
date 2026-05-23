@@ -40,7 +40,6 @@ export class Chat {
         this.user = user;
     }
 
-
     private renderMessage(message: ServerResponse) {
         const datetimeLocale = new Date(message.timestamp).toLocaleString();
         switch (message.type) {
@@ -50,11 +49,15 @@ export class Chat {
                 this.updateChatField("red", systemMessage);
                 break;
             case "userMessage":
-                if (message.staticFiles){
+                if (message.staticFiles) {
                     const staticFiles = message.staticFiles;
                     const userMessage: string =
                         "[" + datetimeLocale + "] " + "[" + message.username + "]: " + message.message + "\n";
-                    this.updateChatField("black", userMessage, "http://" + staticFiles.server + "/static/images/" + staticFiles.uuid + ".png");
+                    this.updateChatField(
+                        "black",
+                        userMessage,
+                        "http://" + staticFiles.server + "/static/images/" + staticFiles.uuid + ".png",
+                    );
                 } else {
                     const userMessage: string =
                         "[" + datetimeLocale + "] " + "[" + message.username + "]: " + message.message;
@@ -78,7 +81,6 @@ export class Chat {
         }
 
         Chat.CHATAREA.appendChild(messageDiv);
-
     }
 
     private renderChatHistory(history: ChatHistory) {
@@ -91,7 +93,6 @@ export class Chat {
         Chat.CHATAREA.innerHTML = "";
     }
 
-    
     public connect(uri: string) {
         if (this.user.isUserConnected()) {
             alert("You already connected to this room!");
