@@ -1,8 +1,6 @@
 import { Chat } from "./chat";
 import { User } from "./user";
 
-import { v4 as uuidv4 } from "uuid";
-
 interface ImageUpload {
     uuid: string;
 }
@@ -31,8 +29,6 @@ function main() {
     document.getElementById("chat_submit_send_message")?.addEventListener("click", async () => {
         const userMessage: string = (document.getElementById("chat_input") as HTMLInputElement).value;
         const files = (document.getElementById("image_field") as HTMLInputElement).files;
-
-        const uuid = uuidv4();
 
         if (files && files.length > 0) {
             const file = files[0];
