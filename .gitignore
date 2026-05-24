@@ -41,6 +41,7 @@ Server/static/images
 tasks/
 track
 **/.idea
+
+### Other ###
 Client/node_modules
 .mvn
-
