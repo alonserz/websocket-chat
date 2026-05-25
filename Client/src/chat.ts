@@ -81,6 +81,7 @@ export class Chat {
 		}
 
 		Chat.CHATAREA.appendChild(messageDiv);
+		Chat.CHATAREA.scrollTo(0, Chat.CHATAREA.clientHeight)
 	}
 
 	private renderChatHistory(history: ChatHistory) {
@@ -93,7 +94,7 @@ export class Chat {
 		Chat.CHATAREA.innerHTML = "";
 	}
 
-	public isConnect() {
+	public isConnected() {
 		return this.user.isUserConnected();
 	}
 
