@@ -5,16 +5,14 @@
   justify-content: flex-start;
   align-items: center;
   gap: 10px;
-}
 
-.top > div > * {
-  width: 320px;
+  > * {
+    width: 320px;
+  }
 }
 
 .top,
 .bottom {
-  padding: 20px 10px;
-  background: #a9a9a9;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -23,9 +21,31 @@
   gap: 10px;
 }
 
+.top {
+  padding: 20px 10px 10px 10px;
+  position: relative;
+  z-index: 100;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    width: 100%;
+    height: 20px;
+    background-image: linear-gradient(0deg, transparent, white 60%);
+  }
+}
+
+.bottom {
+  position: fixed;
+  bottom: 0;
+  padding: 10px;
+  height: 60px;
+}
+
 .message-box {
   width: 100%;
-  height: 50px;
+  height: 40px;
 }
 
 input,
@@ -35,27 +55,59 @@ textarea {
   padding: 10px;
 }
 
+textarea {
+  resize: none;
+  overflow: auto;
+}
+
 .message-wrapper {
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
   gap: 10px;
-}
 
-.message-wrapper label,
-.message-wrapper button {
-  width: 50px;
-  height: 50px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  background-color: white;
-  font-size: 14px;
-  border-radius: 10px;
-  border: 1px solid black;
+  label,
+  button {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    border-radius: 10px;
+    position: relative;
+    padding: 10px;
+
+    &::before {
+      content: "";
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(45deg, #3ece8a, #2d7cff);
+    }
+
+    &.send::before {
+      clip-path: polygon(10% 0, 30% 100%, 100% 50%);
+    }
+
+    &.attach::before {
+      clip-path: polygon(
+        84% 16%,
+        10% 10%,
+        22% 82%,
+        37% 65%,
+        25% 20%,
+        67% 31%,
+        76% 66%,
+        58% 36%,
+        44% 55%,
+        90% 90%
+      );
+    }
+  }
 }
 
 button {
@@ -64,6 +116,22 @@ button {
   border: 1px solid black;
   line-height: 24px;
   padding: 4px 20px;
+  cursor: pointer;
+}
+
+input,
+textarea,
+button,
+label {
+  appearance: none;
+  border: none;
+  background-color: #d7d7d7;
+
+  &:focus {
+    appearance: none;
+    border: none;
+    background-color: #d7d7d7;
+  }
 }
 
 .chat {
@@ -75,16 +143,17 @@ button {
   gap: 10px;
   width: 100%;
   overflow-y: auto;
-}
+  padding: 20px 10px 60px 10px;
 
-.chat > p {
-  padding: 10px;
-  background: #ededed;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 10px;
-  margin: 0;
+  > p {
+    padding: 10px;
+    background: #ededed;
+    border-radius: 20px 20px 20px 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0;
+  }
 }

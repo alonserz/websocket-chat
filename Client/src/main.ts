@@ -18,7 +18,7 @@ function main() {
 
 	document.getElementById("chat_connect")?.addEventListener("click", async (e) => {
 		let target = e.currentTarget as HTMLButtonElement;
-		if (!chat.isConnect()) {
+		if (!chat.isConnected()) {
 			let res = await chat.connect(chat.getDefaultUri()).catch(() => { });
 			if (!res) return;
 			target.innerText = "Disconnect";
@@ -41,6 +41,11 @@ function main() {
 	});
 
 	function chatSubmitMessage() {
+		if (!chat.isConnected()) {
+			alert("You are not connected yet!");
+			return;
+		}
+
 		const userMessage: string = (document.getElementById("chat_input") as HTMLInputElement).value;
 		const files = (document.getElementById("image_field") as HTMLInputElement).files;
 
@@ -67,6 +72,7 @@ function main() {
 		(document.getElementById("chat_input") as HTMLInputElement).value = "";
 		(document.getElementById("image_field") as HTMLInputElement).value = "";
 	}
+
 }
 
 main();
