@@ -1,5 +1,6 @@
 package org.example;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -16,6 +17,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class ChatServerInitializer extends ChannelInitializer<Channel> {
     public static final ConcurrentLinkedQueue<ServerResponse> chatHistory = new ConcurrentLinkedQueue<>();
     public static final ConcurrentHashMap<String, String> fileLookupTable = new ConcurrentHashMap<>();
+    public static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void initChannel(Channel ch) throws Exception {

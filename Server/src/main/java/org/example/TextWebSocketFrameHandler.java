@@ -15,10 +15,10 @@ import org.example.user.User;
 import org.example.user.UserStates;
 
 import static org.example.ChatServerInitializer.chatHistory;
+import static org.example.ChatServerInitializer.objectMapper;
 
 public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
     private static final ChannelGroup channelGroup = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
-    private static final ObjectMapper objectMapper = new ObjectMapper();
     private final User user = new User();
     private Channel ctxChannel;
 
