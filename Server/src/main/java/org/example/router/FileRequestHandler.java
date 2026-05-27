@@ -27,7 +27,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 public class FileRequestHandler implements IHandler {
     private FullHttpRequest request;
-    private  ChannelHandlerContext ctx;
+    private ChannelHandlerContext ctx;
 
     private String sanitizeUri(String uri) {
         final Pattern INSECURE_URI = Pattern.compile(".*[<>&\"].*");

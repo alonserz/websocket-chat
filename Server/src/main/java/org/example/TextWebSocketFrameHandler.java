@@ -1,7 +1,6 @@
 package org.example;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -25,7 +24,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object event) throws Exception {
         if (event == WebSocketServerProtocolHandler.ServerHandshakeStateEvent.HANDSHAKE_COMPLETE) {
-            channelGroup.add(ctx.channel());
+            TextWebSocketFrameHandler.channelGroup.add(ctx.channel());
         } else {
             super.userEventTriggered(ctx, event);
         }
@@ -33,7 +32,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) {
-        this.ctxChannel = ctx.channel();
+        ctxChannel = ctx.channel();
     }
 
     @Override
@@ -62,7 +61,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     }
 
     private void broadcast(String message) {
-        for (Channel channel : channelGroup) {
+        for (Channel channel : TextWebSocketFrameHandler.channelGroup) {
             channel.writeAndFlush(new TextWebSocketFrame(message));
         }
     }
@@ -97,7 +96,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
         ServerResponse serverResponse = new ServerResponse("systemMessage", "User " + user.username + " disconnected from room!", "System");
         String serverResponseJSON = objectMapper.writeValueAsString(serverResponse);
         broadcast(serverResponseJSON);
-        channelGroup.remove(ctx.channel());
+        TextWebSocketFrameHandler.channelGroup.remove(ctx.channel());
         addResponseToHistory(serverResponse);
     }
 

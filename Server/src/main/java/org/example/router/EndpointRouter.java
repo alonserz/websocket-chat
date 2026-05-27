@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 public class EndpointRouter {
     private final ConcurrentHashMap<String, IHandler> routerLookupHashmap = new ConcurrentHashMap<>();
+
     public void add(String endpoint, IHandler handler) {
         routerLookupHashmap.put(endpoint, handler);
     }

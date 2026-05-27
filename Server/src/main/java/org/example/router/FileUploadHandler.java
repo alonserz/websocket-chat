@@ -40,7 +40,7 @@ public class FileUploadHandler implements IHandler {
             flushPromise.addListener(ChannelFutureListener.CLOSE);
         }
     }
-
+    
     private void sendOKResponse(String data) {
         FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.copiedBuffer(data, CharsetUtil.UTF_8));
         response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
