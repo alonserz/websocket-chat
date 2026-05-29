@@ -13,8 +13,11 @@ import org.example.messages.*;
 import org.example.user.User;
 import org.example.user.UserStates;
 
-import static org.example.ChatServerInitializer.chatHistory;
-import static org.example.ChatServerInitializer.objectMapper;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.example.ChatServerInitializer.*;
 
 public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
     private static final ChannelGroup channelGroup = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
@@ -79,10 +82,12 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
         addResponseToHistory(serverResponse);
     }
 
-    private void userMessage(ClientRequest message) throws JsonProcessingException {
+    private void userMessage(ClientRequest message) throws IOException {
         ServerResponse serverResponse;
         if (message.uuid != null) {
-            serverResponse = new ServerResponse("userMessage", message.message, user.username, new Static("image", message.uuid, "localhost:8080"));
+            String contentType = Files.probeContentType(Path.of(fileLookupTable.get(message.uuid)));
+            serverResponse = new ServerResponse("userMessage", message.message, user.username,
+                                                new Static(contentType, message.uuid, "localhost:8080"));
         } else {
             serverResponse = new ServerResponse("userMessage", message.message, user.username);
         }

@@ -40,7 +40,7 @@ public class FileUploadHandler implements IHandler {
             flushPromise.addListener(ChannelFutureListener.CLOSE);
         }
     }
-    
+
     private void sendOKResponse(String data) {
         FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.copiedBuffer(data, CharsetUtil.UTF_8));
         response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
@@ -52,8 +52,20 @@ public class FileUploadHandler implements IHandler {
         byte[] image = new byte[request.content().readableBytes()];
         request.content().readBytes(image);
 
+        String contentType = request.headers().get("Content-Type");
+        String[] contentTypeSplit = contentType.split("/");
+
+        String fileType = contentTypeSplit[0];
+        String extension = contentTypeSplit[1];
         ImageUpload imageUpload = new ImageUpload();
-        String filepath = "static/images/" + imageUpload.uuid + ".png";
+
+        String filepath = "";
+        if (fileType.equalsIgnoreCase("image")) {
+            filepath = "static/images/" + imageUpload.uuid + "." + extension;
+        } else if (fileType.equalsIgnoreCase("video")) {
+            filepath = "static/videos/" + imageUpload.uuid + "." + extension;
+        }
+
         fileLookupTable.put(String.valueOf(imageUpload.uuid), filepath);
         try (FileOutputStream fos = new FileOutputStream(filepath)) {
             fos.write(image);

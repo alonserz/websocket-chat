@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -71,8 +74,9 @@ public class FileRequestHandler implements IHandler {
                 HttpHeaderNames.LAST_MODIFIED, dateFormatter.format(new Date(fileToCache.lastModified())));
     }
 
-    private void setContentTypeHeader(HttpResponse response) {
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "image/png");
+    private void setContentTypeHeader(HttpResponse response, File file) throws IOException {
+        String contentType = Files.probeContentType(Path.of(file.getPath()));
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
     }
 
     private void sendError(HttpResponseStatus status) {
@@ -133,7 +137,7 @@ public class FileRequestHandler implements IHandler {
 
         HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
         HttpUtil.setContentLength(response, fileLength);
-        setContentTypeHeader(response);
+        setContentTypeHeader(response, file);
         setDateAndCacheHeaders(response, file);
 
         if (!keepAlive) {

@@ -9,6 +9,7 @@ function main() {
 	const user: User = new User();
 	const chat: Chat = new Chat(user);
 
+	// (document.getElementById("ws_uri") as HTMLInputElement).placeholder = chat.getDefaultUri();
 	(document.getElementById("username") as HTMLInputElement).placeholder = user.getDefaultUsername();
 
 	document.getElementById("confirm_username_change")?.addEventListener("click", () => {
@@ -16,36 +17,16 @@ function main() {
 		user.changeUsername(username);
 	});
 
-	document.getElementById("chat_connect")?.addEventListener("click", async (e) => {
-		let target = e.currentTarget as HTMLButtonElement;
-		if (!chat.isConnected()) {
-			let res = await chat.connect(chat.getDefaultUri()).catch(() => { });
-			if (!res) return;
-			target.innerText = "Disconnect";
-		} else {
-			chat.disconnect();
-			target.innerText = "Connect";
-		}
+	document.getElementById("chat_connect")?.addEventListener("click", () => {
+		chat.connect(chat.getDefaultUri());
+	});
+
+	document.getElementById("chat_disconnect")?.addEventListener("click", () => {
+		chat.disconnect();
+		alert("You was disconnected!");
 	});
 
 	document.getElementById("chat_submit_send_message")?.addEventListener("click", async () => {
-		chatSubmitMessage();
-	});
-
-	document.getElementById('chat_input')?.addEventListener('keydown', (e) => {
-		// Отправка сообщений при нажатии enter в поле ввода
-		if (e.key === 'Enter') {
-			e.preventDefault();
-			chatSubmitMessage();
-		}
-	});
-
-	function chatSubmitMessage() {
-		if (!chat.isConnected()) {
-			alert("You are not connected yet!");
-			return;
-		}
-
 		const userMessage: string = (document.getElementById("chat_input") as HTMLInputElement).value;
 		const files = (document.getElementById("image_field") as HTMLInputElement).files;
 
@@ -61,18 +42,17 @@ function main() {
 				.then((json) => {
 					const uuid: string = (json as ImageUpload).uuid;
 					chat.sendClientRequest("userMessage", userMessage, uuid);
+					console.log(uuid);
 				})
 				.catch((error) => {
-					console.error(error);
+					console.log(error);
 				});
 		} else {
 			chat.sendClientRequest("userMessage", userMessage);
 		}
-
 		(document.getElementById("chat_input") as HTMLInputElement).value = "";
 		(document.getElementById("image_field") as HTMLInputElement).value = "";
-	}
-
+	});
 }
 
 main();

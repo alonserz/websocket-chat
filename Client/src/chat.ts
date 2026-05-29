@@ -53,11 +53,24 @@ export class Chat {
 					const staticFiles = message.staticFiles;
 					const userMessage: string =
 						"[" + datetimeLocale + "] " + "[" + message.username + "]: " + message.message + "\n";
-					this.updateChatField(
-						"black",
-						userMessage,
-						"http://" + staticFiles.server + "/static/images/" + staticFiles.uuid + ".png",
-					);
+				
+					const staticFilesTypeSplit = staticFiles.type.split("/");
+					const fileType: string = staticFilesTypeSplit[0];
+					const extension: string = staticFilesTypeSplit[1];
+
+					if (fileType == "image") {
+						this.updateChatField(
+							"black",
+							userMessage,
+							"http://" + staticFiles.server + "/static/images/" + staticFiles.uuid + "." + extension,
+						);
+					} else if (fileType == "video") {
+						this.updateChatField(
+							"black",
+							userMessage,
+							"http://" + staticFiles.server + "/static/videos/" + staticFiles.uuid + "." + extension,
+						);
+					}
 				} else {
 					const userMessage: string =
 						"[" + datetimeLocale + "] " + "[" + message.username + "]: " + message.message;
@@ -75,13 +88,22 @@ export class Chat {
 		messageDiv.innerText = message;
 
 		if (url) {
-			const messageImg = new Image();
-			messageImg.src = url;
-			messageDiv.appendChild(messageImg);
+			const urlSplit = url.split(".");
+			if (urlSplit[1] == "png") {
+				const messageImg = new Image();
+				messageImg.src = url;
+				messageDiv.appendChild(messageImg);
+			} else if (urlSplit[1] == "mp4") {
+				const messageVideo = document.createElement("video");
+				const sourceVideo = document.createElement("source");
+				sourceVideo.src = url;
+				sourceVideo.type = "video/mp4";
+				messageVideo.appendChild(sourceVideo);
+				messageDiv.appendChild(messageVideo);
+			}
 		}
 
 		Chat.CHATAREA.appendChild(messageDiv);
-		Chat.CHATAREA.scrollTo(0, Chat.CHATAREA.clientHeight)
 	}
 
 	private renderChatHistory(history: ChatHistory) {
@@ -94,55 +116,43 @@ export class Chat {
 		Chat.CHATAREA.innerHTML = "";
 	}
 
-	public isConnected() {
-		return this.user.isUserConnected();
-	}
+	public connect(uri: string) {
+		if (this.user.isUserConnected()) {
+			alert("You already connected to this room!");
+			return;
+		}
 
-	public connect(uri: string): Promise<boolean> {
-		return new Promise((resolve, reject) => {
-			if (this.user.isUserConnected()) {
-				alert("You already connected to this room!");
-				resolve(true);
-				return true;
+		if (uri === "") {
+			uri = Chat.DEFAULT_URI;
+		}
+
+		this.socket = new WebSocket(uri);
+
+		this.socket.onopen = () => {
+			this.sendClientConnectRequest("connect", this.user.getUsername(), "connect!");
+			this.user.updateUserState(UserStates.CONNECTED);
+		};
+
+		this.socket.onmessage = (event: MessageEvent) => {
+			const message = JSON.parse(event.data);
+			switch (message.type) {
+				case "chatHistory":
+					this.renderChatHistory(message as ChatHistory);
+					break;
+				default:
+					this.renderMessage(message as ServerResponse);
+					break;
 			}
+		};
 
-			if (uri === "") {
-				uri = Chat.DEFAULT_URI;
-			}
+		this.socket.onerror = (event: Event) => {
+			console.log(event);
+		};
 
-			this.socket = new WebSocket(uri);
-
-			this.socket.onopen = () => {
-				this.sendClientConnectRequest("connect", this.user.getUsername(), "connect!");
-				this.user.updateUserState(UserStates.CONNECTED);
-				resolve(true);
-				return true;
-			};
-
-			this.socket.onmessage = (event: MessageEvent) => {
-				const message = JSON.parse(event.data);
-				switch (message.type) {
-					case "chatHistory":
-						this.renderChatHistory(message as ChatHistory);
-						break;
-					default:
-						this.renderMessage(message as ServerResponse);
-						break;
-				}
-			};
-
-			this.socket.onerror = (event: Event) => {
-				console.log(event);
-				reject(false);
-				return false;
-			};
-
-			this.socket.onclose = () => {
-				this.user.updateUserState(UserStates.DISCONNECTED);
-				this.clearChat();
-			};
-
-		});
+		this.socket.onclose = () => {
+			this.user.updateUserState(UserStates.DISCONNECTED);
+			this.clearChat();
+		};
 	}
 
 	public disconnect() {
